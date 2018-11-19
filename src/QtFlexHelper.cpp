@@ -347,6 +347,7 @@ void FlexHelperImplWin::updateFrame(HWND hwnd)
     }
 
     _calc = TRUE;
+
     RECT rc;
     GetWindowRect(hwnd, &rc);
     int w = rc.right - rc.left;
@@ -408,6 +409,7 @@ void FlexHelperImplWin::updateFrame(HWND hwnd)
 
     _wndW = w;
     _wndH = h;
+
     _calc = FALSE;
 }
 
@@ -792,7 +794,7 @@ void FlexHelper::layout(int w)
 
     if (impl->_buttons->maxButton()->button() == Flex::Restore)
     {
-        aw = 16;
+        aw = 0;
     }
 
     if (impl->_buttons->maxButton()->button() == Flex::Restore)
@@ -824,16 +826,6 @@ bool FlexHelper::eventFilter(QObject* obj, QEvent* evt)
 #ifdef Q_OS_MAC
     auto d = static_cast<FlexHelperImplMac*>(impl.data());
 #endif
-
-    if (evt->type() == QEvent::WindowStateChange)
-    {
-        QWindowStateChangeEvent* e = static_cast<QWindowStateChangeEvent*>(evt);
-
-        if (e->oldState() & Qt::WindowMaximized)
-        {
-            QGuiApplication::platformNativeInterface()->setWindowProperty(QWidget::find(hwnd)->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(-8, -31, -8, -8)));
-        }
-    }
 
     if (evt->type() == QEvent::Resize)
     {
@@ -935,7 +927,9 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
                 FlexHelperImplWin::_hook = SetWindowsHookEx(WH_KEYBOARD, FlexHelperImplWin::keyEvent, NULL, GetCurrentThreadId());
             }
         }
+#if QT_VERSION <= QT_VERSION_CHECK(5, 7, 1)
         QApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+#endif
         break;
     }
     case WM_EXITSIZEMOVE:
@@ -950,7 +944,9 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
             }
             QMetaObject::invokeMethod(object, "leaveMove", Q_ARG(QObject*, object));
         }
+#if QT_VERSION <= QT_VERSION_CHECK(5, 7, 1)
         QApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+#endif
         break;
     }
 //    case WM_DWMCOMPOSITIONCHANGED:
@@ -990,15 +986,55 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
     }
     case WM_SIZE:
     {
+        if (d->_lock)
+        {
+            return false;
+        }
+
         RECT rc;
         GetWindowRect(hwnd, &rc);
         int w = rc.right - rc.left;
         int h = rc.bottom - rc.top;
+
+        //int w = LOWORD(lParam);
+        //int h = HIWORD(lParam);
+
+        if (wParam == SIZE_MINIMIZED)
+        {
+        }
+        else if (wParam == SIZE_RESTORED)
+        {
+            auto widget = QWidget::find(reinterpret_cast<WId>(hwnd));
+            if (widget == nullptr)
+            {
+                break;
+            }
+            d->_lock = 1;
+            QGuiApplication::platformNativeInterface()->setWindowProperty(widget->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(-8, -31, -8, -8)));
+            d->_lock = 0;
+            d->_buttons->maxButton()->setButton(Flex::Maximize);
+            d->_buttons->maxButton()->setToolTip(QWidget::tr("Maximize"));
+        }
+        else if (wParam == SIZE_MAXIMIZED)
+        {
+            auto widget = QWidget::find(reinterpret_cast<WId>(hwnd));
+            if (widget == nullptr)
+            {
+                break;
+            }
+            d->_lock = 1;
+            QGuiApplication::platformNativeInterface()->setWindowProperty(widget->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(+8, -31, -8, +8)));
+            d->_lock = 0;
+            d->_buttons->maxButton()->setToolTip(QWidget::tr("Restore"));
+            d->_buttons->maxButton()->setButton(Flex::Restore);
+        }
+
         if (w != d->_wndW || h != d->_wndH)
         {
             d->updateFrame(hwnd);
             d->redrawFrame(hwnd);
         }
+
         if (wParam == SIZE_MINIMIZED)
         {
             if (GetWindowLongPtr(hwnd, GWL_STYLE) & WS_MAXIMIZE)
@@ -1006,18 +1042,7 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
                 d->modifyStyle(hwnd, WS_MAXIMIZE, 0, 0);
             }
         }
-        else if (wParam == SIZE_RESTORED)
-        {
-            d->_buttons->maxButton()->setButton(Flex::Maximize);
-            d->_buttons->maxButton()->setToolTip(QWidget::tr("Maximize"));
-        }
-        else if (wParam == SIZE_MAXIMIZED)
-        {
-            QGuiApplication::platformNativeInterface()->setWindowProperty(QWidget::find(reinterpret_cast<WId>(hwnd))->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(+8, -31, -8, +8)));
 
-            d->_buttons->maxButton()->setToolTip(QWidget::tr("Restore"));
-            d->_buttons->maxButton()->setButton(Flex::Restore);
-        }
         break;
     }
     case WM_STYLECHANGED:
@@ -1042,6 +1067,14 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
         if ((msg->wParam & 0xFFF0) == SC_MOVE && !IsIconic(hwnd) && !(GetKeyState(VK_CONTROL) & 0x8000))
         {
             d->_moving = true;
+        }
+        if ((msg->wParam & 0xF020) == SC_MINIMIZE)
+        {
+            QGuiApplication::platformNativeInterface()->setWindowProperty(QWidget::find(reinterpret_cast<WId>(hwnd))->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(-8, -31, -8, -8)));
+        }
+        if ((msg->wParam & 0xF030) == SC_MAXIMIZE)
+        {
+            QGuiApplication::platformNativeInterface()->setWindowProperty(QWidget::find(reinterpret_cast<WId>(hwnd))->windowHandle()->handle(), QByteArrayLiteral("WindowsCustomMargins"), QVariant::fromValue(QMargins(+8, -31, -8, +8)));
         }
         break;
     }
@@ -1323,7 +1356,7 @@ void FlexHelper::on_button_clicked()
             if (window->isTopLevel())
             {
 #ifdef Q_OS_WIN
-                ::SendMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                ::PostMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_MINIMIZE, 0);
 #else
                 window->showMinimized();
 #endif
@@ -1333,7 +1366,7 @@ void FlexHelper::on_button_clicked()
             if (window->isTopLevel())
             {
 #ifdef Q_OS_WIN
-                SendMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+                PostMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 #else
                 window->showMaximized();
 #endif
@@ -1343,7 +1376,7 @@ void FlexHelper::on_button_clicked()
             if (window->isTopLevel())
             {
 #ifdef Q_OS_WIN
-                SendMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_RESTORE, 0);
+                PostMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_RESTORE, 0);
 #else
                 window->showNormal();
 #endif
@@ -1353,7 +1386,7 @@ void FlexHelper::on_button_clicked()
             if (window->isTopLevel())
             {
 #ifdef Q_OS_WIN
-                SendMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_CLOSE, 0);
+                PostMessage(reinterpret_cast<HWND>(window->internalWinId()), WM_SYSCOMMAND, SC_CLOSE, 0);
 #else
                 window->close();
 #endif
