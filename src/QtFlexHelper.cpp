@@ -12,7 +12,7 @@
 #include <QtWidgets/QApplication>
 
 #ifdef Q_OS_WIN
-#include <qpa/qplatformnativeinterface.h>
+#include <qplatformnativeinterface.h>
 #endif
 
 #ifdef Q_OS_WIN
@@ -953,22 +953,22 @@ bool FlexHelper::nativeEvent(const QByteArray&, void* event, long* result)
         QApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
         break;
     }
-    case WM_DWMCOMPOSITIONCHANGED:
-    {
-        BOOL dwmEnabled = TRUE;
-        dwmEnabled = (d->_dwmAllowed && PtrDwmIsCompositionEnabled && PtrDwmIsCompositionEnabled(&dwmEnabled) == S_OK & dwmEnabled);
-        if (d->_dwmEnabled != dwmEnabled)
-        {
-            d->_dwmEnabled = dwmEnabled;
-            SetWindowRgn(hwnd, 0, TRUE);
-            if (!d->_dwmEnabled)
-            {
-                d->updateStyle(hwnd);
-            }
-            SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-        }
-        break;
-    }
+//    case WM_DWMCOMPOSITIONCHANGED:
+//    {
+//        BOOL dwmEnabled = TRUE;
+//        dwmEnabled = (d->_dwmAllowed && PtrDwmIsCompositionEnabled && PtrDwmIsCompositionEnabled(&dwmEnabled) == S_OK & dwmEnabled);
+//        if (d->_dwmEnabled != dwmEnabled)
+//        {
+//            d->_dwmEnabled = dwmEnabled;
+//            SetWindowRgn(hwnd, 0, TRUE);
+//            if (!d->_dwmEnabled)
+//            {
+//                d->updateStyle(hwnd);
+//            }
+//            SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+//        }
+//        break;
+//    }
     case WM_WINDOWPOSCHANGING:
     {
         DWORD dwStyle = GetWindowLongPtr(hwnd, GWL_STYLE);

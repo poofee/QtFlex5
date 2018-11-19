@@ -8,20 +8,24 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG(debug, debug|release) {
     TARGET = Qt5Flexd
+    DESTDIR = $$_PRO_FILE_PWD_/../Debug
 } else {
     TARGET = Qt5Flex
+    DESTDIR = $$_PRO_FILE_PWD_/../Release
 }
+
 
 TEMPLATE = lib
 
-QMAKE_CXXFLAGS += -std=c++11 -stdlib=libc++
+QMAKE_CXXFLAGS += -fpermissive#-std=c++11 -stdlib=libc++
 
 DEFINES += QT_FLEX_BUILD
 
-INCLUDEPATH += "../../../../libs/Qt/5.5.0/5.5/msvc2013_64/include/QtCore/5.5.0/QtCore"
-INCLUDEPATH += "../../../../libs/Qt/5.5.0/5.5/msvc2013_64/include/QtGui/5.5.0/QtGui"
-INCLUDEPATH += "../../../../libs/Qt/5.5.0/5.5/msvc2013_64/include/QtWidgets/ß5.5.0/QtWidgets"
-INCLUDEPATH += "../../../../libs/Qt/5.5.0/5.5/msvc2013_64/include/QtWidgets"
+INCLUDEPATH += C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/include/QtCore/5.4.2/QtCore
+INCLUDEPATH += C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/include/QtGui/5.4.2/QtGui
+INCLUDEPATH += C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/include/QtWidgets/5.4.2/QtWidgets
+INCLUDEPATH += C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/include/QtWidgets
+INCLUDEPATH += C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/include/QtGui/5.4.2/QtGui/qpa
 
 SOURCES += \
     QtDockGuider.cpp \

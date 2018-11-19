@@ -362,9 +362,9 @@ void FlexWidgetImpl::update(FlexWidget* self)
     switch (self->viewMode())
     {
     case Flex::ToolView:
-        palette.setColor(QPalette::Active, self->backgroundRole(), QColor("#FFF29D"));
+        palette.setColor(QPalette::Active, self->backgroundRole(), QColor("#FAFBFE"));
         palette.setColor(QPalette::Inactive, self->backgroundRole(), QColor("#4D6082"));
-        palette.setColor(QPalette::Active, QPalette::Highlight, QColor("#FFF29D"));
+        palette.setColor(QPalette::Active, QPalette::Highlight, QColor("#FAFBFE"));
         palette.setColor(QPalette::Inactive, QPalette::Highlight, QColor("#4D6082"));
         palette.setColor(QPalette::Active, self->foregroundRole(), QColor("#000000"));
         palette.setColor(QPalette::Inactive, self->foregroundRole(), QColor("#FFFFFF"));

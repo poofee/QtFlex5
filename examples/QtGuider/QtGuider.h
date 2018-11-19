@@ -21,6 +21,9 @@ protected:
 public:
     void openFile_N(int n);
     void openView_N(int n);
+	void fillSolutionExplorer(QWidget * w);
+	void createTree(QWidget * w);
+	void createTable(QWidget * w);
 
 private slots:
     void on_actionEdit_Undo_triggered();
