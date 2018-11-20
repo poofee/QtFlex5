@@ -30,12 +30,6 @@ QtCentral::QtCentral(QWidget* parent) : QWidget(parent)
     connect(FlexManager::instance(), SIGNAL(flexWidgetDestroying(FlexWidget*)), SLOT(on_flexWidgetDestroying(FlexWidget*)));
     connect(FlexManager::instance(), SIGNAL(dockWidgetDestroying(DockWidget*)), SLOT(on_dockWidgetDestroying(DockWidget*)));
 
-    _widget = new QPushButton("Click");
-	//QPushButton *b1 = new QPushButton("Click2");
-	//QPushButton *b2 = new QPushButton("Click3");
-	//box->addWidget(b1);
-	//box->addWidget(b2);
-	//box->addWidget(_widget);
 
     QSettings settings("QtFlex5", "QtGuider");
 
@@ -59,7 +53,7 @@ QtCentral::QtCentral(QWidget* parent) : QWidget(parent)
 
 void QtCentral::createOne()
 {
-    auto content = FlexManager::instance()->createFlexWidget(Flex::HybridView, this, Flex::widgetFlags(), "M");
+	auto content = FlexManager::instance()->createFlexWidget(Flex::ToolView, this, Flex::widgetFlags(), "M");
     layout()->addWidget(content);
 }
 
@@ -208,26 +202,9 @@ void QtGuider::openView_N(int n)
 			default:
 				break;
 			}
-			/*QGroupBox * box1 = new QGroupBox(dockWidget->widget());
-			QPushButton* b1 = new QPushButton("hi1111", box1);
-			QPushButton* b2 = new QPushButton("hi11kkk11", box1);
-			QPushButton* b3 = new QPushButton("hi1kk111", box1);
-			QPushButton* b4 = new QPushButton("hi1jhh111", box1);
-			
-			QVBoxLayout * vbox = new QVBoxLayout(box1);
-			
-			vbox->addWidget(b1);
-			vbox->addWidget(b2);
-			vbox->addWidget(b3);
-			vbox->addWidget(b4);
-			
-			QVBoxLayout * vbox1 = new QVBoxLayout(dockWidget->widget());
-			vbox1->addWidget(box1);
-			vbox1->setMargin(50);
-			vbox->addStretch(1);*/
 			
 			dockWidget->setViewMode(Flex::ToolView);
-            dockWidget->setWindowTitle(dockWidgetName);
+			dockWidget->setWindowTitle(dockWidgetName); 
             flexWidget->addDockWidget(dockWidget);
             flexWidget->show();
             flexWidget->move(geometry().center() - flexWidget->rect().center());

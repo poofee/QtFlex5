@@ -96,7 +96,7 @@ public:
     QSplitter* _sideContainer = nullptr;
     FlexHelper* _helper = nullptr;
     QPoint _startPoint;
-    Flex::ViewMode _viewMode = Flex::HybridView;
+	Flex::ViewMode _viewMode;// = Flex::HybridView;
     bool _adjusting = false;
     bool _reserving = false;
 };

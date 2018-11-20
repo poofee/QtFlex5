@@ -198,7 +198,7 @@ void DockSiteImpl::adjust(DockSite* self, DockWidget* widget)
 
     if (_persistent || !widget || widget->viewMode() == Flex::FileView || widget->viewMode() == Flex::FilePagesView)
     {
-        tabPalette.setColor(QPalette::Active, QPalette::Highlight, QColor("#FFF29D"));
+        tabPalette.setColor(QPalette::Active, QPalette::Highlight, QColor("#FFF29D"));//修改细横线
         tabPalette.setColor(QPalette::Inactive, QPalette::Highlight, QColor("#4D6082"));
         tabPalette.setColor(QPalette::Active, QPalette::Window, QColor("#5B7199"));
         tabPalette.setColor(QPalette::Inactive, QPalette::Window, QColor("#364E6F"));
@@ -222,7 +222,7 @@ void DockSiteImpl::adjust(DockSite* self, DockWidget* widget)
         _tabBar->setShape(QTabBar::RoundedNorth);
         //_tabBar->setFixedHeight(22);
         //if (widget) _tabBar->show();
-        _tabBar->show();
+        //_tabBar->show();//控制tabbar的显示
     }
     else
     {

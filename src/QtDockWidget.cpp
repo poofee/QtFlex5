@@ -25,7 +25,7 @@ public:
     DockWidgetImpl() : _active(false), _helper(nullptr)
     {
         //_background.setRgbF(1.0f * qrand() / RAND_MAX, 1.0f * qrand() / RAND_MAX, 1.0f * qrand() / RAND_MAX);
-		_background.setRgbF(1.0, 1.0, 1.0);
+		_background.setRgbF(0, 0, 0);
         _dockFeatures = Flex::AllowDockAsNorthTabPage | Flex::AllowDockAsSouthTabPage;
         _siteFeatures = Flex::AllowDockAsNorthTabPage | Flex::AllowDockAsSouthTabPage;
     }
@@ -147,7 +147,7 @@ DockWidget::DockWidget(Flex::ViewMode viewMode, QWidget* parent, Qt::WindowFlags
     impl->update(this);
 
     impl->_layout = new QVBoxLayout(this);
-    impl->_layout->setContentsMargins(0, 0, 0, 0);
+    impl->_layout->setContentsMargins(16, 16, 16, 16);//控制客户区域
     impl->_layout->setSpacing(0);
 
     impl->_layout->addWidget(impl->_widget);
@@ -189,7 +189,7 @@ bool DockWidget::nativeEvent(const QByteArray& eventType, void *message, long *r
 void DockWidget::paintEvent(QPaintEvent*)
 {
     QStylePainter painter(this);
-
+	//貌似是绘制一个客户区，有一定效果
     painter.fillRect(rect().adjusted(15, 15, -15, -15), impl->_background);
 
     QRect titleBarRect;
