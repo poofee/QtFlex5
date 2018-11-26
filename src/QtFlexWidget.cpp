@@ -96,7 +96,7 @@ public:
     QSplitter* _sideContainer = nullptr;
     FlexHelper* _helper = nullptr;
     QPoint _startPoint;
-	Flex::ViewMode _viewMode;// = Flex::HybridView;
+	Flex::ViewMode _viewMode = Flex::HybridView;
     bool _adjusting = false;
     bool _reserving = false;
 };
@@ -359,7 +359,7 @@ void FlexWidgetImpl::update(FlexWidget* self)
 
     auto palette = self->palette();
 
-    switch (self->viewMode())
+    /*switch (self->viewMode())
     {
     case Flex::ToolView:
         palette.setColor(QPalette::Active, self->backgroundRole(), QColor("#FAFBFE"));
@@ -423,7 +423,7 @@ void FlexWidgetImpl::update(FlexWidget* self)
         _titleBarHeight = self->style()->pixelMetric(QStyle::PM_TitleBarHeight, nullptr, self) + 8;
         _frameWidth = self->style()->pixelMetric(QStyle::PM_SplitterWidth, nullptr, self);
         break;
-    }
+    }*/
 
     self->setPalette(palette);
 

@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     QApplication::setWindowIcon(guider);
 
-    QApplication::setStyle(new FlexStyle());
+    //QApplication::setStyle(new FlexStyle());
 
     QtGuider w; w.show();
 

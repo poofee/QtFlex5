@@ -12,14 +12,14 @@
 #include <QtWidgets/QApplication>
 
 #ifdef Q_OS_WIN
-#include <qplatformnativeinterface.h>
+#include <qpa/qplatformnativeinterface.h>
 #endif
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
 #endif
 
-#include <private/qwidgetresizehandler_p.h>
+#include <QtWidgets/private/qwidgetresizehandler_p.h>
 
 class FlexButton : public QToolButton
 {

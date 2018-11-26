@@ -23,7 +23,7 @@ QtCentral::QtCentral(QWidget* parent) : QWidget(parent)
     setObjectName("Central");
 
     QHBoxLayout* box = new QHBoxLayout(this);
-    box->setContentsMargins(0, 0, 0, 0);
+    box->setContentsMargins(20, 20, 20, 20);
 
     connect(FlexManager::instance(), SIGNAL(flexWidgetCreated(FlexWidget*)), SLOT(on_flexWidgetCreated(FlexWidget*)));
     connect(FlexManager::instance(), SIGNAL(dockWidgetCreated(DockWidget*)), SLOT(on_dockWidgetCreated(DockWidget*)));
